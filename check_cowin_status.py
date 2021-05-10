@@ -24,7 +24,7 @@ def play_alarm():
     p.terminate()    
 
 
-def file_write(session_match, file_name = "MyFile.txt"):
+def file_write(sessions_match, file_name = "MyFile.txt"):
     to_print = ""
     for i in sessions_match:
         to_print = to_print \
