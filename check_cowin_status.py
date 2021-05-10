@@ -59,7 +59,7 @@ def check_slots():
         for pin_i in pin_codes:
             url = "https://cdn-api.co-vin.in/api/"
 
-            find_sess = "v2/appointment/sessions/public/findByPin?pincode={}&date={}".format(pin_i, "10-05-2021")
+            find_sess = "v2/appointment/sessions/public/findByPin?pincode={}&date={}".format(pin_i, day_i)
 
             h = {\
                 'Accept-Language': 'en_US',\
