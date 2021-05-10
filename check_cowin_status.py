@@ -2,6 +2,7 @@ import datetime
 import requests
 import pyaudio
 import wave 
+import argparse
 
 def play_alarm():
     chunk = 1024
@@ -42,16 +43,15 @@ def file_write(sessions_match, file_name = "MyFile.txt"):
     file.close()
 
 
-def check_slots():
+def check_slots( pincodes, days ):
+
     pres_time = datetime.datetime.now()
-    days = [pres_time.date() + datetime.timedelta(days = i) for i in range(1, 5)]
+    days = [pres_time.date() + datetime.timedelta(days = i) for i in range(1, days+1)]
     days = [day_i.strftime("%d-%m-%Y") for day_i in days]
 
-    pin_codes = [800001, 800014]
+    pin_codes = pincodes
 
-    user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)" + \
-                "AppleWebKit/537.36 (KHTML, like Gecko) "+\
-                "Chrome/83.0.4103.97 Safari/537.36"
+    user_agent = None
 
     response_dict = {}
 
@@ -61,18 +61,18 @@ def check_slots():
 
             find_sess = "v2/appointment/sessions/public/findByPin?pincode={}&date={}".format(pin_i, day_i)
 
-            h = {\
-                'Accept-Language': 'en_US',\
-                "User-Agent": user_agent,\
-                'Authorization':'Bearer ar33ff22aawqff2df',\
+            h = {
+                "User-Agent": user_agent
             }
 
             response = requests.get(
-                url = url + find_sess,\
-                headers = h,\
+                url = url + find_sess,
+                headers = h,
                 )
-            response_dict[(day_i, pin_i)] = response
 
+            if response.status_code == 200:
+                response_dict[(day_i, pin_i)] = response
+    
     session_list = []
     for key_i in response_dict.keys():
         for j in response_dict[key_i].json()["sessions"]:
@@ -90,4 +90,9 @@ def check_slots():
 
 
 if (__name__ == "__main__"):
-    check_slots()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p','--pin_codes', nargs="*", type=int, help="Specify pin codes for which vaccine slots are probed. Default=100000", default=[100000])
+    parser.add_argument('-d','--days', type=int, default=4, help="Specify the number of days to probe. Default = 4 days" )
+    args = parser.parse_args()
+    args = vars(args)
+    check_slots( args["pin_codes"], args["days"] )
