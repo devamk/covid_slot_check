@@ -1,39 +1,26 @@
 import datetime
 import requests
-import pyaudio
-import wave 
 import argparse
+import simpleaudio as sa
 
 def play_alarm():
-    chunk = 1024
-    f = wave.open(r"TF004.wav","rb")
-    p = pyaudio.PyAudio() 
-    stream = p.open(format = p.get_format_from_width(f.getsampwidth()),  
-                    channels = f.getnchannels(),  
-                    rate = f.getframerate(),  
-                    output = True)  
-
-    data = f.readframes(chunk)  
-
-    while data:  
-        stream.write(data)  
-        data = f.readframes(chunk)  
-
-    stream.stop_stream()  
-    stream.close()  
-
-    p.terminate()    
-
+    filename = 'TF004.wav'
+    wave_obj = sa.WaveObject.from_wave_file(filename)
+    play_obj = wave_obj.play()
+    play_obj.wait_done()
 
 def file_write(sessions_match, file_name = "MyFile.txt"):
     to_print = ""
     for i in sessions_match:
-        to_print = to_print \
-                  +"name: {}\n".format(i["name"])\
-                  + "address: {}\n".format(i["address"])\
-                  + "block_name: {}\n".format(i["block_name"])\
-                  + "# slots: {}\n".format(i["available_capacity"])\
-                  + "age_limit: {}\n\n".format(i["min_age_limit"])
+
+        to_print = to_print + "name: {}\n address: {}\n block_name: {}\n# Slots: {}\nage_limit: {}\n\n".
+                                format( 
+                                    i["name"],
+                                    i["address"],
+                                    i["block_name"],
+                                    i["available_capacity"],
+                                    i["min_age_limit"]
+                                )
     file = open(file_name, "a")
 
     header = "\n=================================\n"+\
