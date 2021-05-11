@@ -67,7 +67,7 @@ def check_slots( pincodes, days ):
 
     sessions_match = []
     for session_i in session_list:
-        if (session_i["min_age_limit"] < 45) & (session_i["available_capacity"] > 0):
+        if (session_i["min_age_limit"] < 44) & (session_i["available_capacity"] > 0):
             sessions_match.append(session_i)
 
     file_write(sessions_match)
